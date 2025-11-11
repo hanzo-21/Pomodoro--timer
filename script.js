@@ -8,8 +8,6 @@ class PomodoroTimer {
                 defaultSeconds: 0,
                 currentMinutes: 25,
                 currentSeconds: 0,
-                isRunning: false,
-                intervalId: null,
                 totalTime: 25 * 60,
                 remainingTime: 25 * 60
             },
@@ -18,8 +16,6 @@ class PomodoroTimer {
                 defaultSeconds: 0,
                 currentMinutes: 5,
                 currentSeconds: 0,
-                isRunning: false,
-                intervalId: null,
                 totalTime: 5 * 60,
                 remainingTime: 5 * 60
             }
@@ -32,6 +28,9 @@ class PomodoroTimer {
         
         this.currentEditingTimer = null;
         this.theme = 'light';
+        this.isRunning = false;
+        this.currentPhase = 'work'; // 'work' or 'break'
+        this.intervalId = null;
         
         this.init();
     }
@@ -42,6 +41,8 @@ class PomodoroTimer {
         this.setupEventListeners();
         this.updateDisplays();
         this.updateStats();
+        this.updatePhaseDisplay();
+        this.updateTimerSections();
     }
     
     setupEventListeners() {
@@ -65,108 +66,125 @@ class PomodoroTimer {
         });
     }
     
-    toggleTimer(type) {
-        const timer = this.timers[type];
-        const button = document.getElementById(`${type}StartStop`);
-        const display = document.getElementById(`${type}Timer`);
+    togglePomodoro() {
+        const button = document.getElementById('mainStartStop');
+        const currentTimer = this.timers[this.currentPhase];
         
-        if (timer.isRunning) {
+        if (this.isRunning) {
             // Stop timer
-            this.stopTimer(type);
+            this.stopPomodoro();
             button.innerHTML = '<i class="fas fa-play"></i> Start';
             button.classList.remove('running');
-            display.classList.remove('active');
+            this.updateTimerSections();
         } else {
             // Start timer
-            this.startTimer(type);
+            this.startPomodoro();
             button.innerHTML = '<i class="fas fa-pause"></i> Pause';
             button.classList.add('running');
-            display.classList.add('active');
+            this.updateTimerSections();
         }
     }
     
-    startTimer(type) {
-        const timer = this.timers[type];
-        timer.isRunning = true;
+    startPomodoro() {
+        this.isRunning = true;
+        const currentTimer = this.timers[this.currentPhase];
         
-        timer.intervalId = setInterval(() => {
-            if (timer.remainingTime > 0) {
-                timer.remainingTime--;
-                timer.currentMinutes = Math.floor(timer.remainingTime / 60);
-                timer.currentSeconds = timer.remainingTime % 60;
-                this.updateDisplay(type);
+        this.intervalId = setInterval(() => {
+            if (currentTimer.remainingTime > 0) {
+                currentTimer.remainingTime--;
+                currentTimer.currentMinutes = Math.floor(currentTimer.remainingTime / 60);
+                currentTimer.currentSeconds = currentTimer.remainingTime % 60;
+                this.updateDisplay(this.currentPhase);
             } else {
-                this.completeTimer(type);
+                this.completeCurrentPhase();
             }
         }, 1000);
     }
     
-    stopTimer(type) {
-        const timer = this.timers[type];
-        timer.isRunning = false;
+    stopPomodoro() {
+        this.isRunning = false;
         
-        if (timer.intervalId) {
-            clearInterval(timer.intervalId);
-            timer.intervalId = null;
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
         }
     }
     
-    resetTimer(type) {
-        const timer = this.timers[type];
-        
+    resetPomodoro() {
         // Stop if running
-        if (timer.isRunning) {
-            this.stopTimer(type);
-            const button = document.getElementById(`${type}StartStop`);
-            const display = document.getElementById(`${type}Timer`);
+        if (this.isRunning) {
+            this.stopPomodoro();
+            const button = document.getElementById('mainStartStop');
             button.innerHTML = '<i class="fas fa-play"></i> Start';
             button.classList.remove('running');
-            display.classList.remove('active');
         }
         
-        // Reset to default values
-        timer.currentMinutes = timer.defaultMinutes;
-        timer.currentSeconds = timer.defaultSeconds;
-        timer.remainingTime = timer.totalTime;
+        // Reset both timers to default values
+        Object.keys(this.timers).forEach(type => {
+            const timer = this.timers[type];
+            timer.currentMinutes = timer.defaultMinutes;
+            timer.currentSeconds = timer.defaultSeconds;
+            timer.remainingTime = timer.totalTime;
+        });
         
-        this.updateDisplay(type);
+        // Reset to work phase
+        this.currentPhase = 'work';
+        
+        this.updateDisplays();
+        this.updatePhaseDisplay();
+        this.updateTimerSections();
     }
     
-    completeTimer(type) {
-        const timer = this.timers[type];
-        const display = document.getElementById(`${type}Timer`);
-        const button = document.getElementById(`${type}StartStop`);
+    completeCurrentPhase() {
+        const currentTimer = this.timers[this.currentPhase];
+        const display = document.getElementById(`${this.currentPhase}Timer`);
         
         // Stop the timer
-        this.stopTimer(type);
-        
-        // Update UI
-        button.innerHTML = '<i class="fas fa-play"></i> Start';
-        button.classList.remove('running');
-        display.classList.remove('active');
-        display.classList.add('completed');
+        this.stopPomodoro();
         
         // Play completion animation
+        display.classList.add('completed');
         setTimeout(() => {
             display.classList.remove('completed');
         }, 600);
         
         // Update stats
-        this.stats[`${type}Sessions`]++;
+        this.stats[`${this.currentPhase}Sessions`]++;
         this.saveStats();
         this.updateStats();
         
-        // Reset timer
-        timer.currentMinutes = timer.defaultMinutes;
-        timer.currentSeconds = timer.defaultSeconds;
-        timer.remainingTime = timer.totalTime;
-        this.updateDisplay(type);
-        
         // Show notification
-        this.showNotification(type);
+        this.showNotification(this.currentPhase);
         
-        // Play sound (if browser supports it)
+        // Play sound
         this.playCompletionSound();
+        
+        // Switch to next phase
+        this.switchPhase();
+        
+        // Auto-start next phase
+        setTimeout(() => {
+            this.startPomodoro();
+            const button = document.getElementById('mainStartStop');
+            button.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            button.classList.add('running');
+            this.updateTimerSections();
+        }, 1000);
+    }
+    
+    switchPhase() {
+        // Switch between work and break
+        this.currentPhase = this.currentPhase === 'work' ? 'break' : 'work';
+        
+        // Reset current phase timer
+        const currentTimer = this.timers[this.currentPhase];
+        currentTimer.currentMinutes = currentTimer.defaultMinutes;
+        currentTimer.currentSeconds = currentTimer.defaultSeconds;
+        currentTimer.remainingTime = currentTimer.totalTime;
+        
+        this.updateDisplay(this.currentPhase);
+        this.updatePhaseDisplay();
+        this.updateTimerSections();
     }
     
     updateDisplay(type) {
@@ -182,6 +200,50 @@ class PomodoroTimer {
     updateDisplays() {
         this.updateDisplay('work');
         this.updateDisplay('break');
+    }
+    
+    updatePhaseDisplay() {
+        const phaseElement = document.getElementById('currentPhase');
+        const icon = phaseElement.querySelector('i');
+        const text = phaseElement.querySelector('span');
+        
+        if (this.currentPhase === 'work') {
+            icon.className = 'fas fa-briefcase';
+            text.textContent = 'Work Phase';
+        } else {
+            icon.className = 'fas fa-coffee';
+            text.textContent = 'Break Phase';
+        }
+    }
+    
+    updateTimerSections() {
+        const workSection = document.getElementById('workSection');
+        const breakSection = document.getElementById('breakSection');
+        
+        // Reset classes
+        workSection.classList.remove('active', 'inactive');
+        breakSection.classList.remove('active', 'inactive');
+        
+        if (this.currentPhase === 'work') {
+            workSection.classList.add('active');
+            breakSection.classList.add('inactive');
+            if (this.isRunning) {
+                document.getElementById('workTimer').classList.add('active');
+                document.getElementById('breakTimer').classList.remove('active');
+            }
+        } else {
+            breakSection.classList.add('active');
+            workSection.classList.add('inactive');
+            if (this.isRunning) {
+                document.getElementById('breakTimer').classList.add('active');
+                document.getElementById('workTimer').classList.remove('active');
+            }
+        }
+        
+        if (!this.isRunning) {
+            document.getElementById('workTimer').classList.remove('active');
+            document.getElementById('breakTimer').classList.remove('active');
+        }
     }
     
     openEditModal(type) {
@@ -214,12 +276,13 @@ class PomodoroTimer {
         const minutesInput = document.getElementById('minutesInput');
         const secondsInput = document.getElementById('secondsInput');
         
-        const minutes = parseInt(minutesInput.value) || 1;
-        const seconds = parseInt(secondsInput.value) || 0;
+        const minutes = parseInt(minutesInput.value) || 0;
+        const seconds = parseInt(secondsInput.value) || 1;
         
-        // Validate input
-        if (minutes < 1 || minutes > 60 || seconds < 0 || seconds > 59) {
-            alert('Please enter valid time values (1-60 minutes, 0-59 seconds)');
+        // Validate input - allow 0 minutes but ensure at least 1 second total
+        const totalSeconds = minutes * 60 + seconds;
+        if (minutes < 0 || minutes > 60 || seconds < 0 || seconds > 59 || totalSeconds < 1) {
+            alert('Please enter valid time values (0-60 minutes, 0-59 seconds, minimum 1 second total)');
             return;
         }
         
@@ -229,7 +292,7 @@ class PomodoroTimer {
         timer.totalTime = minutes * 60 + seconds;
         
         // Reset current timer if not running
-        if (!timer.isRunning) {
+        if (!this.isRunning) {
             timer.currentMinutes = minutes;
             timer.currentSeconds = seconds;
             timer.remainingTime = timer.totalTime;
@@ -335,12 +398,12 @@ class PomodoroTimer {
 // Global functions for HTML onclick handlers
 let pomodoroTimer;
 
-function toggleTimer(type) {
-    pomodoroTimer.toggleTimer(type);
+function togglePomodoro() {
+    pomodoroTimer.togglePomodoro();
 }
 
-function resetTimer(type) {
-    pomodoroTimer.resetTimer(type);
+function resetPomodoro() {
+    pomodoroTimer.resetPomodoro();
 }
 
 function openEditModal(type) {
@@ -378,10 +441,8 @@ document.addEventListener('visibilitychange', () => {
 
 // Handle beforeunload to warn about running timers
 window.addEventListener('beforeunload', (e) => {
-    const hasRunningTimer = Object.values(pomodoroTimer.timers).some(timer => timer.isRunning);
-    
-    if (hasRunningTimer) {
-        const message = 'You have running timers. Are you sure you want to leave?';
+    if (pomodoroTimer && pomodoroTimer.isRunning) {
+        const message = 'You have a running timer. Are you sure you want to leave?';
         e.preventDefault();
         e.returnValue = message;
         return message;

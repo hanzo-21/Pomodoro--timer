@@ -23,7 +23,7 @@
 
         <div class="timers-container">
             <!-- Work Timer -->
-            <div class="timer-section">
+            <div class="timer-section" id="workSection">
                 <div class="timer-header">
                     <h2>Work Timer</h2>
                     <button class="edit-btn" onclick="openEditModal('work')">
@@ -33,18 +33,10 @@
                 <div class="timer-display" id="workTimer">
                     <div class="time-text">25:00</div>
                 </div>
-                <div class="timer-controls">
-                    <button class="control-btn start-stop" id="workStartStop" onclick="toggleTimer('work')">
-                        <i class="fas fa-play"></i> Start
-                    </button>
-                    <button class="control-btn reset" onclick="resetTimer('work')">
-                        <i class="fas fa-redo"></i> Reset
-                    </button>
-                </div>
             </div>
 
             <!-- Break Timer -->
-            <div class="timer-section">
+            <div class="timer-section" id="breakSection">
                 <div class="timer-header">
                     <h2>Break Timer</h2>
                     <button class="edit-btn" onclick="openEditModal('break')">
@@ -54,11 +46,21 @@
                 <div class="timer-display" id="breakTimer">
                     <div class="time-text">05:00</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Shared Controls -->
+        <div class="shared-controls">
+            <div class="control-section">
+                <div class="current-phase" id="currentPhase">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Work Phase</span>
+                </div>
                 <div class="timer-controls">
-                    <button class="control-btn start-stop" id="breakStartStop" onclick="toggleTimer('break')">
+                    <button class="control-btn start-stop" id="mainStartStop" onclick="togglePomodoro()">
                         <i class="fas fa-play"></i> Start
                     </button>
-                    <button class="control-btn reset" onclick="resetTimer('break')">
+                    <button class="control-btn reset" onclick="resetPomodoro()">
                         <i class="fas fa-redo"></i> Reset
                     </button>
                 </div>
@@ -93,7 +95,7 @@
             <div class="modal-body">
                 <div class="input-group">
                     <label for="minutesInput">Minutes:</label>
-                    <input type="number" id="minutesInput" min="1" max="60" value="25">
+                    <input type="number" id="minutesInput" min="0" max="60" value="25">
                 </div>
                 <div class="input-group">
                     <label for="secondsInput">Seconds:</label>
