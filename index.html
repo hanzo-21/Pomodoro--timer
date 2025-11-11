@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Theme Toggle -->
+        <div class="theme-toggle">
+            <button id="themeToggle" class="theme-btn">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <header>
+            <h1>Pomodoro Timer</h1>
+            <p>Stay focused and productive with the Pomodoro Technique</p>
+        </header>
+
+        <div class="timers-container">
+            <!-- Work Timer -->
+            <div class="timer-section">
+                <div class="timer-header">
+                    <h2>Work Timer</h2>
+                    <button class="edit-btn" onclick="openEditModal('work')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                <div class="timer-display" id="workTimer">
+                    <div class="time-text">25:00</div>
+                </div>
+                <div class="timer-controls">
+                    <button class="control-btn start-stop" id="workStartStop" onclick="toggleTimer('work')">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                    <button class="control-btn reset" onclick="resetTimer('work')">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Break Timer -->
+            <div class="timer-section">
+                <div class="timer-header">
+                    <h2>Break Timer</h2>
+                    <button class="edit-btn" onclick="openEditModal('break')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                <div class="timer-display" id="breakTimer">
+                    <div class="time-text">05:00</div>
+                </div>
+                <div class="timer-controls">
+                    <button class="control-btn start-stop" id="breakStartStop" onclick="toggleTimer('break')">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                    <button class="control-btn reset" onclick="resetTimer('break')">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-section">
+            <h3>Session Stats</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="workSessions">0</span>
+                    <span class="stat-label">Work Sessions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="breakSessions">0</span>
+                    <span class="stat-label">Break Sessions</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Edit Timer</h3>
+                <button class="close-btn" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="minutesInput">Minutes:</label>
+                    <input type="number" id="minutesInput" min="1" max="60" value="25">
+                </div>
+                <div class="input-group">
+                    <label for="secondsInput">Seconds:</label>
+                    <input type="number" id="secondsInput" min="0" max="59" value="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" onclick="closeEditModal()">Cancel</button>
+                <button class="modal-btn save" onclick="saveTimerSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
