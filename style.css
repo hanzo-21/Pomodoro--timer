@@ -184,11 +184,55 @@ header p {
     z-index: 1;
 }
 
+/* Shared Controls */
+.shared-controls {
+    margin-bottom: 40px;
+}
+
+.control-section {
+    background: var(--bg-primary);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px var(--shadow);
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.current-phase {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+    border-radius: 15px;
+    color: white;
+}
+
+.current-phase i {
+    font-size: 1.3rem;
+}
+
 /* Timer Controls */
 .timer-controls {
     display: flex;
     gap: 15px;
     justify-content: center;
+}
+
+/* Timer Section Modifications */
+.timer-section.inactive {
+    opacity: 0.6;
+    transform: scale(0.95);
+}
+
+.timer-section.active {
+    transform: scale(1.02);
+    box-shadow: 0 15px 40px var(--shadow);
 }
 
 .control-btn {
@@ -503,4 +547,19 @@ header p {
     75% {
         transform: scale(1.1) rotate(-5deg);
     }
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-primary);
+}
+
+.footer p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
 }
