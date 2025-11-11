@@ -41,7 +41,6 @@ class PomodoroTimer {
         this.setupEventListeners();
         this.updateDisplays();
         this.updateStats();
-        this.updatePhaseDisplay();
         this.updateTimerSections();
     }
     
@@ -131,7 +130,6 @@ class PomodoroTimer {
         this.currentPhase = 'work';
         
         this.updateDisplays();
-        this.updatePhaseDisplay();
         this.updateTimerSections();
     }
     
@@ -180,7 +178,6 @@ class PomodoroTimer {
         currentTimer.remainingTime = currentTimer.totalTime;
         
         this.updateDisplay(this.currentPhase);
-        this.updatePhaseDisplay();
         this.updateTimerSections();
     }
     
@@ -197,20 +194,6 @@ class PomodoroTimer {
     updateDisplays() {
         this.updateDisplay('work');
         this.updateDisplay('break');
-    }
-    
-    updatePhaseDisplay() {
-        const phaseElement = document.getElementById('currentPhase');
-        const icon = phaseElement.querySelector('i');
-        const text = phaseElement.querySelector('span');
-        
-        if (this.currentPhase === 'work') {
-            icon.className = 'fas fa-briefcase';
-            text.textContent = 'Work Phase';
-        } else {
-            icon.className = 'fas fa-coffee';
-            text.textContent = 'Break Phase';
-        }
     }
     
     updateTimerSections() {
