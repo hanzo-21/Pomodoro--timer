@@ -153,11 +153,8 @@ class PomodoroTimer {
         this.saveStats();
         this.updateStats();
         
-        // Show notification
-        this.showNotification(this.currentPhase);
-        
-        // Play sound
-        this.playCompletionSound();
+        // Play completion sound
+        this.playCompletionSound(this.currentPhase);
         
         // Switch to next phase
         this.switchPhase();
@@ -341,56 +338,31 @@ class PomodoroTimer {
         localStorage.setItem('pomodoroStats', JSON.stringify(this.stats));
     }
     
-    showNotification(type) {
-        const message = type === 'work' ? 
-            'Work session completed! Time for a break.' : 
-            'Break time is over! Ready to work?';
-        
-        // Check if browser supports notifications
-        if ('Notification' in window) {
-            if (Notification.permission === 'granted') {
-                new Notification('Pomodoro Timer', {
-                    body: message,
-                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzIiIGN5PSIzMiIgcj0iMzIiIGZpbGw9IiNGRkEyMzkiLz4KPHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSIxNiIgeT0iMTYiPgo8cGF0aCBkPSJNMTYgNEExMiAxMiAwIDEgMSA0IDE2IDEyIDEyIDAgMCAxIDE2IDRaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiLz4KPHBhdGggZD0iTTE2IDhWMTZMMjIgMjIiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo8L3N2Zz4K'
-                });
-            } else if (Notification.permission !== 'denied') {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        new Notification('Pomodoro Timer', {
-                            body: message
-                        });
-                    }
-                });
-            }
-        }
-        
-        // Fallback: Browser alert
-        setTimeout(() => {
-            alert(message);
-        }, 100);
-    }
-    
-    playCompletionSound() {
-        // Create audio context and play a simple beep
+    playCompletionSound(phase) {
+        // Play different sound files for work and break completion
         try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
+            const audio = new Audio();
             
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
+            // Set the sound file path based on the completed phase
+            if (phase === 'work') {
+                // Work session completed, about to start break
+                audio.src = './sounds/breakBegin.mp3'; // You can also use .wav, .ogg, etc.
+            } else {
+                // Break session completed, about to start work
+                audio.src = './sounds/workBegin.mp3';
+            }
             
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-            oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+            // Set volume (0.0 to 1.0)
+            audio.volume = 0.7;
             
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            // Play the sound
+            audio.play().catch(error => {
+                console.log('Could not play sound file:', error);
+                console.log('Make sure the sound files exist in the ./sounds/ directory');
+            });
             
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.3);
         } catch (error) {
-            console.log('Audio not supported');
+            console.log('Audio playback not supported or sound file not found:', error);
         }
     }
 }
@@ -421,11 +393,6 @@ function saveTimerSettings() {
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     pomodoroTimer = new PomodoroTimer();
-    
-    // Request notification permission on load
-    if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission();
-    }
 });
 
 // Handle page visibility changes (pause timers when tab is not visible)
