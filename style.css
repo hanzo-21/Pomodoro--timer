@@ -99,9 +99,18 @@ header p {
 /* Timers Container */
 .timers-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 40px;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 30px;
     margin-bottom: 40px;
+    align-items: start;
+}
+
+/* For smaller screens, stack vertically */
+@media (max-width: 1024px) {
+    .timers-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
 }
 
 .timer-section {
@@ -186,7 +195,8 @@ header p {
 
 /* Shared Controls */
 .shared-controls {
-    margin-bottom: 40px;
+    margin-bottom: 0;
+    align-self: center;
 }
 
 .control-section {
@@ -196,6 +206,15 @@ header p {
     box-shadow: 0 10px 30px var(--shadow);
     border: 1px solid var(--border);
     text-align: center;
+    min-width: 250px;
+}
+
+/* For smaller screens, add margin back */
+@media (max-width: 1024px) {
+    .shared-controls {
+        margin-bottom: 40px;
+        align-self: stretch;
+    }
 }
 
 .current-phase {
@@ -222,6 +241,8 @@ header p {
     display: flex;
     gap: 15px;
     justify-content: center;
+    flex-wrap: nowrap;
+    align-items: center;
 }
 
 /* Timer Section Modifications */
@@ -236,7 +257,7 @@ header p {
 }
 
 .control-btn {
-    padding: 15px 30px;
+    padding: 15px 20px;
     border: none;
     border-radius: 12px;
     font-size: 1rem;
@@ -246,8 +267,10 @@ header p {
     align-items: center;
     gap: 8px;
     transition: all 0.3s ease;
-    min-width: 120px;
+    min-width: 100px;
     justify-content: center;
+    flex: 1;
+    max-width: 140px;
 }
 
 .start-stop {
@@ -495,14 +518,14 @@ header p {
     }
     
     .control-btn {
-        padding: 12px 20px;
+        padding: 12px 15px;
         font-size: 0.9rem;
-        min-width: 100px;
+        min-width: 80px;
+        max-width: 120px;
     }
     
     .timer-controls {
-        flex-direction: column;
-        align-items: center;
+        gap: 10px;
     }
     
     .stats-grid {
@@ -521,6 +544,18 @@ header p {
     
     .timer-display {
         padding: 30px 15px;
+    }
+    
+    .control-btn {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+        min-width: 70px;
+        max-width: 100px;
+        gap: 5px;
+    }
+    
+    .timer-controls {
+        gap: 8px;
     }
     
     .modal-content {
