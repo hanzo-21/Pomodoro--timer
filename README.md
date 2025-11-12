@@ -9,7 +9,8 @@ A modern, responsive web-based Pomodoro Timer application built with HTML, CSS, 
 ### 🕐 **Connected Timer System**
 - **Dual Timers**: Work timer (default: 25 minutes) and Break timer (default: 5 minutes)
 - **Automatic Switching**: When work ends, break automatically starts (and vice versa)
-- **Single Control Panel**: One set of Start/Stop and Reset buttons controls both timers
+- **Smart Control Panel**: Three-button control system (Start/Pause, Next, Reset) manages both timers
+- **Next Session Skip**: Jump to the next phase instantly with auto-start functionality
 - **Continuous Cycle**: Work → Break → Work → Break...
 
 ### ⚙️ **Customizable Settings**
@@ -18,15 +19,20 @@ A modern, responsive web-based Pomodoro Timer application built with HTML, CSS, 
 - **Edit Controls**: Easy-to-use edit buttons for each timer
 - **Persistent Settings**: Your custom times are saved between sessions
 
-### 🎨 **Modern Design**
+### 🎨 **Modern Responsive Design**
 - **Light & Dark Mode**: Toggle between themes with a single click
 - **Custom Color Palette**: 
   - Light Blue: `#8CE4FF`
   - Light Yellow: `#FEEE91`
   - Orange: `#FFA239`
   - Red: `#FF5656`
-- **Responsive Design**: Works perfectly on desktop, tablet, and mobile
-- **Smooth Animations**: Visual feedback and transitions
+- **Adaptive Layout**: 
+  - **Desktop**: Three-column layout (Work | Controls | Break)
+  - **Mobile**: Single-column stack with optimized spacing
+  - **All Devices**: Buttons always remain in horizontal row
+- **Responsive Breakpoints**: Optimized for screens from 320px to 4K+
+- **Touch-Friendly**: Large buttons and touch targets for mobile devices
+- **Smooth Animations**: Visual feedback and seamless transitions
 
 ### 🔊 **Audio Notifications**
 - **Custom Sound Files**: Play your own audio files when timers complete
@@ -73,10 +79,13 @@ A modern, responsive web-based Pomodoro Timer application built with HTML, CSS, 
 
 1. **Set Your Times**: Click the edit buttons (📝) to customize work and break durations
 2. **Start Timer**: Click the "Start" button to begin your work session
-3. **Automatic Flow**: The app automatically switches between work and break phases
-4. **Track Progress**: Monitor your completed sessions in the statistics section
-5. **Theme Toggle**: Use the moon/sun icon to switch between light and dark modes
-6. **Reset Anytime**: Use the reset button to stop and return to the beginning
+3. **Control Your Flow**: 
+   - **Start/Pause**: Toggle timer on/off
+   - **Next**: Skip to next session (counts as completed + auto-starts)
+   - **Reset**: Stop everything and return to work phase
+4. **Automatic Flow**: The app automatically switches between work and break phases
+5. **Track Progress**: Monitor your completed sessions in the statistics section
+6. **Theme Toggle**: Use the moon/sun icon to switch between light and dark modes
 
 ## 🛠️ Customization
 
@@ -129,6 +138,8 @@ Unlike traditional separate timers, this app connects work and break timers in a
 - **Active Timer**: Currently running timer is highlighted
 - **Inactive Timer**: Non-active timer is dimmed
 - **Completion Animation**: Special animation when phases complete
+- **Next Button Feedback**: Brief transition animation when switching phases
+- **Button States**: Visual indicators for Start/Pause/Running states
 - **Theme Adaptation**: All elements adapt to light/dark mode
 
 ### Data Persistence
