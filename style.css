@@ -264,6 +264,17 @@ header p {
     background: var(--accent-red);
 }
 
+.next {
+    background: var(--accent-blue);
+    color: var(--text-primary);
+}
+
+.next:hover {
+    background: var(--accent-orange);
+    color: white;
+    transform: translateY(-2px);
+}
+
 .reset {
     background: var(--bg-secondary);
     color: var(--text-primary);

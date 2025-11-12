@@ -181,6 +181,37 @@ class PomodoroTimer {
         this.updateTimerSections();
     }
     
+    nextSession() {
+        // Stop current timer if running
+        if (this.isRunning) {
+            this.stopPomodoro();
+        }
+        
+        // Update stats for current session (as if it was completed)
+        this.stats[`${this.currentPhase}Sessions`]++;
+        this.saveStats();
+        this.updateStats();
+        
+        // Switch to next phase
+        this.switchPhase();
+        
+        // Show brief visual feedback for transition
+        const display = document.getElementById(`${this.currentPhase}Timer`);
+        display.classList.add('completed');
+        setTimeout(() => {
+            display.classList.remove('completed');
+        }, 300);
+        
+        // Auto-start the next session after brief delay
+        setTimeout(() => {
+            this.startPomodoro();
+            const button = document.getElementById('mainStartStop');
+            button.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            button.classList.add('running');
+            this.updateTimerSections();
+        }, 500);
+    }
+    
     updateDisplay(type) {
         const timer = this.timers[type];
         const display = document.querySelector(`#${type}Timer .time-text`);
@@ -359,6 +390,10 @@ function togglePomodoro() {
 
 function resetPomodoro() {
     pomodoroTimer.resetPomodoro();
+}
+
+function nextSession() {
+    pomodoroTimer.nextSession();
 }
 
 function openEditModal(type) {
